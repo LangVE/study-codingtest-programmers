@@ -8,43 +8,82 @@ public class Joystic {
     Map<Character, Integer> alphaMap = extracted();
 
     public int solution(String name) {
-        int answer = 0;
-        int answerReverse = 0;
-        char[] initialArr = getInitialArr(name);
+        char[] tempNameArr = getInitialArr(name);
         char[] nameArr = name.toCharArray();
 
-        if (Arrays.equals(initialArr, nameArr)) {
-            return 0;
+        int count = 0;
+        int currIndex = 0;
+
+        while (!Arrays.equals(tempNameArr, nameArr)) {
+            if (nameArr[currIndex] != 'A' && tempNameArr[currIndex] == 'A') {
+                int n = alphaMap.get(nameArr[currIndex]);
+                count += n;
+                nameArr[currIndex] = 'A';
+            } else {
+                // 우측이동
+                int indexRight = getIdxRight(nameArr, currIndex);
+                int moveRight = calcMoveRight(nameArr, currIndex, indexRight);
+
+                // 좌측이동
+                int indexLeft = getIdxLeft(nameArr, currIndex);
+                int moveLeft = calcMoveLeft(nameArr, currIndex, indexLeft);
+
+                currIndex = moveRight > moveLeft ? indexLeft : indexRight;
+                count += moveRight > moveLeft ? moveLeft : moveRight;
+            }
         }
 
-        for (int i = 0; i < nameArr.length; i++) {
-            int n = alphaMap.get(nameArr[i]);
-            answer += n;
-            initialArr[i] = nameArr[i];
+        return count;
+    }
 
-            if (Arrays.equals(initialArr, nameArr)) {
-                break;
+    private int calcMoveLeft(char[] nameArr, int idx, int idxLeft) {
+        int moveLeft;
+        if (idxLeft <= idx) {
+            moveLeft = idx - idxLeft;
+        } else {
+            moveLeft = (nameArr.length - 1 - idxLeft) + idx + 1;
+        }
+        return moveLeft;
+    }
+
+    private int calcMoveRight(char[] nameArr, int idx, int idxRight) {
+        int moveRight;
+        if (idxRight >= idx) {
+            moveRight = idxRight - idx;
+        } else {
+            moveRight = (nameArr.length - 1 - idx) + idxRight + 1;
+        }
+        return moveRight;
+    }
+
+    int getIdxRight(char[] nameArr, int idx) {
+        while (true) {
+            if (nameArr.length > (idx + 1)) {
+                idx++;
+            } else {
+                idx = 0;
             }
 
-            answer++; // 커서이동
-        }
-
-        initialArr = getInitialArr(name);
-
-        for (int i = 0; i < nameArr.length; i++) {
-            int index = i == 0 ? 0 : nameArr.length - i; // i:0 index:0, i:1 index:2, i:2 index:1
-            int n = alphaMap.get(nameArr[index]);
-            answerReverse += n;
-            initialArr[index] = nameArr[index];
-
-            if (Arrays.equals(initialArr, nameArr)) {
+            if (nameArr[idx] != 'A') {
                 break;
             }
-
-            answerReverse++; // 커서이동
         }
+        return idx;
+    }
 
-        return answer > answerReverse ? answerReverse : answer;
+    int getIdxLeft(char[] nameArr, int idx) {
+        while (true) {
+            if (0 <= (idx - 1)) {
+                idx--;
+            } else {
+                idx = nameArr.length - 1;
+            }
+
+            if (nameArr[idx] != 'A') {
+                break;
+            }
+        }
+        return idx;
     }
 
     private char[] getInitialArr(String name) {
