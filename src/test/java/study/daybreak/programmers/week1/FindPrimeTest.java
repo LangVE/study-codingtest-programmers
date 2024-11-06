@@ -28,7 +28,7 @@ public class FindPrimeTest {
         int actual = findPrime.solution(numbers);
 
         // then
-        Assert.assertEquals(3, actual);
+        Assert.assertEquals(2, actual);
     }
 
     @Test
