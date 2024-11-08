@@ -1,5 +1,8 @@
 package study.daybreak.programmers.year2024.week5;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /*
     코딩테스트 연습 > 깊이/너비 우선 탐색(DFS/BFS) > 게임 맵 최단거리
     https://school.programmers.co.kr/learn/courses/30/lessons/1844
@@ -58,76 +61,48 @@ package study.daybreak.programmers.year2024.week5;
     문제의 예시와 같으며, 상대 팀 진영에 도달할 방법이 없습니다. 따라서 -1을 return 합니다.
 * */
 public class Lessons1844 {
-    private static final int WALL = 0;
     private static final int PATH = 1;
     private static final int NOT_FOUND_COUNT = -1;
 
-    private int result = 10000;
-    private boolean isFound = false;
-
     public int solution(int[][] maps) {
-        int count = 1;
+
+        // 동 남 서 북
+        int[] moveX = {1, 0, -1, 0};
+        int[] moveY = {0, 1, 0, -1};
+
+        int goalX = maps[0].length - 1;
+        int goalY = maps.length - 1;
+
         int x = 0;
         int y = 0;
-        move(maps, count, x, y);
 
-        if (isFound)
-            return result;
+        int[] point = {x, y};
+
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(point);
+
+        while (!queue.isEmpty()) {
+            int[] targetPoint = queue.poll();
+            int targetX = targetPoint[0];
+            int targetY = targetPoint[1];
+
+            if (targetX == goalX && targetY == goalY) {
+                //System.out.println("found!! targetX= " + targetX + ", targetY= " + targetY+", count="+maps[targetY][targetX]);
+                return maps[targetY][targetX];
+            }
+
+            for (int i = 0; i < 4; i++) {
+                int nextX = targetX + moveX[i];
+                int nextY = targetY + moveY[i];
+
+                if (nextX >= 0 && nextY >= 0 && nextX <= goalX && nextY <= goalY && maps[nextY][nextX] == PATH) {
+                    //System.out.println("nextX = " + nextX + ", nextY = " + nextY + ", nextCount=" + Integer.valueOf(maps[targetY][targetX]+1));
+                    maps[nextY][nextX] = maps[targetY][targetX] + 1;
+                    queue.offer(new int[]{nextX, nextY});
+                }
+            }
+        }
 
         return NOT_FOUND_COUNT;
-    }
-
-    private void move(int[][] maps, int count, int x, int y) {
-
-        // 도착여부 확인
-        if (x == maps[0].length - 1 && y == maps.length - 1) {
-            //System.out.println("found!! move="+count);
-            isFound = true;
-            result = Math.min(result, count);
-            return;
-        }
-
-        if (isFound && result < count) {
-            // 발견된 경로 보다 길이가 긴 탐색은 중지
-            //System.out.println("skip!! found move="+result + ", current move =" +count);
-            return;
-        }
-
-        //System.out.println("move="+count+",x=" + x + ",y=" + y);
-        // 현위치 벽으로 변경
-        maps[y][x] = WALL;
-
-        // 동쪽 이동 = x좌표 +1
-        if (x + 1 < maps[0].length) {
-            if (maps[y][x + 1] == PATH) {
-                move(maps, count + 1, x + 1, y);
-            }
-        }
-
-        // 남쪽 이동 = y좌표 +1
-        if (y + 1 < maps.length) {
-            if (maps[y + 1][x] == PATH) {
-                move(maps, count + 1, x, y + 1);
-            }
-        }
-
-        // 서쪽 이동 = x좌표 -1
-        if (x - 1 >= 0) {
-            if (maps[y][x - 1] == PATH) {
-                move(maps, count + 1, x - 1, y);
-            }
-        }
-
-        // 북쪽 이동 = y좌표 -1
-        if (y - 1 >= 0) {
-            if (maps[y - 1][x] == PATH) {
-                move(maps, count + 1, x, y - 1);
-            }
-        }
-
-        //System.out.println("not found move="+count+",x=" + x + ",y=" + y);
-
-        // 현위치 원복
-        maps[y][x] = PATH;
     }
 }
