@@ -1,7 +1,6 @@
 package study.daybreak.programmers.year2024.week6;
 
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.Arrays;
 
 /**
  * <h1><a href="https://school.programmers.co.kr/learn/courses/30/lessons/43236">코딩테스트 연습 > 이분탐색 > 징검다리</a></h1>
@@ -93,122 +92,38 @@ import java.util.stream.IntStream;
 public class Lessons43236 {
     public int solution(int distance, int[] rocks, int n) {
         int answer = 0;
-        List<Integer> distanceList = new ArrayList<>();
+        Arrays.sort(rocks);
 
-        Queue<Integer> rockQueue = new PriorityQueue<>();
-        rockQueue.offer(distance);
+        int sum = 0;
+        int left = 1;
+        int right = distance;
 
-        Arrays.stream(rocks).forEach(i -> rockQueue.offer(i));
+        while (left <= right) {
 
-        print("rockQueue = " + rockQueue);
+            int mid = (left + right) / 2;
+            int removedRocks = 0;
+            int prevPosition = 0;
 
-        int start = 0;
-        while (!rockQueue.isEmpty()) {
-            int end = rockQueue.poll();
-            print("rockQueue = " + end + ", 거리 = " + (end - start));
-            distanceList.add(end - start);
-            start = end;
-        }
+            for (int rock : rocks) {
+                if (rock - prevPosition < mid) {
+                    removedRocks++;
+                } else {
+                    prevPosition = rock;
+                }
+            }
 
-        return extracted(distanceList, n);
-    }
+            if (distance - prevPosition < mid) {
+                removedRocks++;
+            }
 
-    private int extracted(List<Integer> distanceList, int n) {
-
-        print("n = " + n + ", distanceList = " + distanceList);
-        Queue<DistanceMap> distanceMapQueue = new PriorityQueue<>();
-        IntStream.range(0, distanceList.size()).forEach(i -> distanceMapQueue.offer(new DistanceMap(distanceList.get(i), i)));
-        print("distanceMapQueue = " + distanceMapQueue);
-
-        if (n > 0) {
-            n--;
-            // 최소거리 구간
-            DistanceMap minDistanceMap = distanceMapQueue.poll();
-
-            print("minDistanceMap = " + minDistanceMap);
-
-            DistanceMap pairDistanceMap = getPairDistanceMap(distanceList, minDistanceMap.getIndex());
-
-            distanceList.remove(minDistanceMap.getIndex());
-            distanceList.add(minDistanceMap.getIndex(), minDistanceMap.getValue() + pairDistanceMap.getValue());
-            distanceList.remove(pairDistanceMap.getIndex());
-
-            print("distanceList = " + distanceList);
-
-            return extracted(distanceList, n);
-        } else {
-            return distanceMapQueue.poll().getValue();
-        }
-    }
-
-    private DistanceMap getPairDistanceMap(List<Integer> distanceArr, int minValueIndex) {
-        if (minValueIndex == 0 && minValueIndex < distanceArr.size() - 2) {
-            return new DistanceMap(distanceArr.get(minValueIndex + 1), minValueIndex + 1);
-        }
-
-        if (minValueIndex > 0 && minValueIndex == distanceArr.size() - 1) {
-            return new DistanceMap(distanceArr.get(minValueIndex - 1), minValueIndex - 1);
-        }
-
-        if (distanceArr.get(minValueIndex - 1) <= distanceArr.get(minValueIndex + 1)) {
-            return new DistanceMap(distanceArr.get(minValueIndex - 1), minValueIndex - 1);
-        } else {
-            return new DistanceMap(distanceArr.get(minValueIndex + 1), minValueIndex + 1);
-        }
-
-    }
-
-    private void print(String message) {
-        //System.out.println(message);
-    }
-
-    private class DistanceMap implements Comparable<DistanceMap> {
-        private int value;
-        private int index;
-
-        public DistanceMap(int value, int index) {
-            this.value = value;
-            this.index = index;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        @Override
-        public String toString() {
-            return "DistanceMap{" +
-                    "value=" + value +
-                    ", index=" + index +
-                    '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            DistanceMap that = (DistanceMap) o;
-            return value == that.value && index == that.index;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value, index);
-        }
-
-        @Override
-        public int compareTo(DistanceMap o) {
-            if (this.getValue() == o.getValue())
-                return 0;
-            else if (this.getValue() < o.getValue()) {
-                return -1;
+            if (removedRocks <= n) {
+                answer = mid;
+                left = mid + 1;
             } else {
-                return 1;
+                right = mid - 1;
             }
         }
+
+        return answer;
     }
 }
