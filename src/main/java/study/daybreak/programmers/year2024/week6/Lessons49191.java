@@ -1,8 +1,5 @@
 package study.daybreak.programmers.year2024.week6;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /*
     코딩테스트 연습 > 그래프 > 순위
     https://school.programmers.co.kr/learn/courses/30/lessons/49191
@@ -34,38 +31,31 @@ public class Lessons49191 {
         int[][] resultBoard = new int[n][n];
 
         for (int i = 0; i < results.length; i++) {
-            int winPlayer = results[i][0] - 1;
-            int losePlayer = results[i][1] - 1;
+            int winningPlayer = results[i][0] - 1;
+            int losingPlayer = results[i][1] - 1;
 
-            resultBoard[winPlayer][losePlayer] = 1; // 승리
-            resultBoard[losePlayer][winPlayer] = 2; // 패배
+            resultBoard[winningPlayer][losingPlayer] = 1; // 승리
+            resultBoard[losingPlayer][winningPlayer] = 2; // 패배
 
         }
-        printArr(resultBoard);
 
-        for (int i = 0; i < n; i++) {
-            List<Integer> loseList = new ArrayList<>();
-            List<Integer> winList = new ArrayList<>();
+        //printArr(resultBoard);
 
-            for (int j = 0; j < n; j++) {
-                if (resultBoard[i][j] == 1) { // i 선수의 승리 기록이 있으면..
-                    winList.add(j);
-                }
-                if (resultBoard[i][j] == 2) { // i 선수의 패배 기록이 있으면..
-                    loseList.add(j);
-                }
-            }
-
-            for (int win : winList) {
-                for (int lose : loseList) {
-                    resultBoard[win][lose] = 2;
-                    resultBoard[lose][win] = 1;
+        // 2. 플로이드-워셜 알고리즘 적용
+        for (int k = 0; k < n; k++) {            // 중간 노드 k
+            for (int i = 0; i < n; i++) {        // 출발 노드 i
+                for (int j = 0; j < n; j++) {    // 도착 노드 j
+                    if (resultBoard[i][k] == 1 && resultBoard[k][j] == 1) {
+                        resultBoard[i][j] = 1;
+                    }
+                    if (resultBoard[i][k] == 2 && resultBoard[k][j] == 2) {
+                        resultBoard[i][j] = 2;
+                    }
                 }
             }
         }
 
-
-        printArr(resultBoard);
+        //printArr(resultBoard);
 
         for (int i = 0; i < n; i++) {
             int count = 0;
