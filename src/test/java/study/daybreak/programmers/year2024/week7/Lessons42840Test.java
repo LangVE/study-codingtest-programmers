@@ -30,4 +30,18 @@ public class Lessons42840Test {
         Assert.assertArrayEquals(new int[]{1, 2, 3}, actual);
     }
 
+
+    @Test
+    public void test_case3() {
+        // given
+        int[] answer = {5};
+
+        // when
+        Lessons42840 lessons42840 = new Lessons42840();
+        int[] actual = lessons42840.solution(answer);
+
+        // then
+        Assert.assertArrayEquals(new int[]{1, 2, 3}, actual);
+    }
+
 }

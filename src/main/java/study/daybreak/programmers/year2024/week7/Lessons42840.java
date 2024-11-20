@@ -42,24 +42,33 @@ import java.util.List;
 
 * */
 public class Lessons42840 {
-    List<Integer> MembersHighScore = new ArrayList();
-    private int highScore = 0;
 
     public int[] solution(int[] answers) {
-        int[] answer = {};
+        int[][] answerPatternsMember = {
+                {1, 2, 3, 4, 5},
+                {2, 1, 2, 3, 2, 4, 2, 5},
+                {3, 3, 1, 1, 2, 2, 4, 4, 5, 5}
+        };
 
-        int[] answers1 = {1, 2, 3, 4, 5};
-        int[] answers2 = {2, 1, 2, 3, 2, 4, 2, 5};
-        int[] answers3 = {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
+        List<Integer> membersHighScore = new ArrayList();
+        int highScore = 0;
 
-        checked(answers, 1, answers1);
-        checked(answers, 2, answers2);
-        checked(answers, 3, answers3);
+        for (int i = 0; i < answerPatternsMember.length; i++) {
+            int currentScore = checkScore(answers, answerPatternsMember[i]);
 
-        return MembersHighScore.stream().mapToInt(i -> i).toArray();
+            if (highScore < currentScore) {
+                highScore = currentScore;
+                membersHighScore.clear();
+                membersHighScore.add(i + 1);
+            } else if (highScore == currentScore) {
+                membersHighScore.add(i + 1);
+            }
+        }
+
+        return membersHighScore.stream().mapToInt(Integer::intValue).toArray();
     }
 
-    private void checked(int[] answers, int memberNum, int[] answersMember) {
+    private int checkScore(int[] answers, int[] answersMember) {
         int currentScore = 0;
 
         for (int i = 0; i < answers.length; i++) {
@@ -67,15 +76,8 @@ public class Lessons42840 {
                 currentScore++;
             }
         }
-
         //System.out.println("currentScore = " + currentScore);
 
-        if (highScore < currentScore) {
-            highScore = currentScore;
-            MembersHighScore = new ArrayList<>();
-            MembersHighScore.add(memberNum);
-        } else if (highScore == currentScore) {
-            MembersHighScore.add(memberNum);
-        }
+        return currentScore;
     }
 }
