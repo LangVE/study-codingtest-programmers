@@ -1,5 +1,8 @@
 package study.daybreak.programmers.year2024.week7;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /*
     코딩테스트 연습 > 깊이/너비 우선 탐색(DFS/BFS) > 네트워크
     https://school.programmers.co.kr/learn/courses/30/lessons/43162
@@ -38,28 +41,37 @@ package study.daybreak.programmers.year2024.week7;
 
 * */
 public class Lessons43162 {
+    private static void bfs(int[][] computers, int start, boolean[] visited) {
+        visited[start] = true; // 방문처리
+
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(start);
+
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+
+            for (int j = 0; j < computers.length; j++) {
+                if (computers[current][j] == 1 && !visited[j]) {
+                    visited[j] = true;
+                    queue.offer(j);
+                }
+            }
+        }
+    }
+
     public int solution(int n, int[][] computers) {
         int answer = 0;
-        boolean[] visted = new boolean[n];
+
+        boolean[] visited = new boolean[n];
 
         for (int i = 0; i < n; i++) {
-            if (!visted[i]) {
-                dfs(i, computers, visted);
+            if (!visited[i]) {
+                bfs(computers, i, visited);
+
                 answer++;
             }
         }
 
         return answer;
-    }
-
-    private void dfs(int start, int[][] computers, boolean[] visted) {
-        //System.out.println("start = " + start);
-        visted[start] = true;
-        for (int j = 0; j < computers[start].length; j++) {
-            if (computers[start][j] == 1 && start != j && !visted[j]) {
-                visted[j] = true;
-                dfs(j, computers, visted);
-            }
-        }
     }
 }
