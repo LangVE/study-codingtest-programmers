@@ -39,29 +39,27 @@ package study.daybreak.programmers.year2024.week7;
 * */
 public class Lessons43162 {
     public int solution(int n, int[][] computers) {
-        int answer = n;
+        int answer = 0;
+        boolean[] visted = new boolean[n];
 
         for (int i = 0; i < n; i++) {
-            for (int j = i; j < n; j++) {
-                if (i == j) continue;
-
-                if (computers[i][j] == 1 && i < j && check(i, j, computers)) {
-                    answer--;
-                }
-
-                if (answer == 1)
-                    return answer;
+            if (!visted[i]) {
+                dfs(i, computers, visted);
+                answer++;
             }
         }
 
         return answer;
     }
 
-    private boolean check(int i, int j, int[][] computers) {
-        for (int k = 0; k < i; k++) {
-            if (computers[k][i] == 1 && computers[k][j] == 1) return false;
+    private void dfs(int start, int[][] computers, boolean[] visted) {
+        //System.out.println("start = " + start);
+        visted[start] = true;
+        for (int j = 0; j < computers[start].length; j++) {
+            if (computers[start][j] == 1 && start != j && !visted[j]) {
+                visted[j] = true;
+                dfs(j, computers, visted);
+            }
         }
-
-        return true;
     }
 }
