@@ -47,37 +47,32 @@ public class Lessons120875 {
         int p3 = 2;
         int p4 = 3;
 
-        int idxX = 0;
-        int idxY = 1;
-
         // 1,2 vs 3,4
-        int diffX1 = dots[p1][idxX] - dots[p2][idxX];
-        int diffY1 = dots[p1][idxY] - dots[p2][idxY];
-
-        int diffX2 = dots[p3][idxX] - dots[p4][idxX];
-        int diffY2 = dots[p3][idxY] - dots[p4][idxY];
-
-        if (diffX1 == diffX2 && diffY1 == diffY2)
+        if (check(dots[p1], dots[p2], dots[p3], dots[p4]) == 1)
             return 1;
 
         // 1,3 vs 2,4
-        diffX1 = dots[p1][idxX] - dots[p3][idxX];
-        diffY1 = dots[p1][idxY] - dots[p3][idxY];
-
-        diffX2 = dots[p2][idxX] - dots[p4][idxX];
-        diffY2 = dots[p2][idxY] - dots[p4][idxY];
-
-        if (diffX1 == diffX2 && diffY1 == diffY2)
+        if (check(dots[p1], dots[p3], dots[p2], dots[p4]) == 1)
             return 1;
 
         // 1,4 vs 2,3
-        diffX1 = dots[p1][idxX] - dots[p4][idxX];
-        diffY1 = dots[p1][idxY] - dots[p4][idxY];
+        if (check(dots[p1], dots[p4], dots[p2], dots[p3]) == 1)
+            return 1;
 
-        diffX2 = dots[p2][idxX] - dots[p3][idxX];
-        diffY2 = dots[p2][idxY] - dots[p3][idxY];
+        return 0;
+    }
 
-        if (diffX1 == diffX2 && diffY1 == diffY2)
+    private int check(int[] point1, int[] point2, int[] point3, int[] point4) {
+        int idxX = 0;
+        int idxY = 1;
+
+        float xDiff1 = point1[idxX] - point2[idxX];
+        float yDiff1 = point1[idxY] - point2[idxY];
+
+        float xDiff2 = point3[idxX] - point4[idxX];
+        float yDiff2 = point3[idxY] - point4[idxY];
+
+        if (xDiff1 / yDiff1 == xDiff2 / yDiff2)
             return 1;
 
         return 0;
