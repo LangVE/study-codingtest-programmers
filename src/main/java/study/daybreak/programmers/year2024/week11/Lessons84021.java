@@ -18,8 +18,8 @@ public class Lessons84021 {
     int boardSize;
 
     public int solution(int[][] game_board, int[][] table) {
-        int answer = 0;
         boardSize = game_board.length;
+        int answer = 0;
 
         List<List<int[]>> emptyList = findShape(game_board, 0);
         List<List<int[]>> puzzlePieces = findShape(table, 1);
@@ -32,40 +32,11 @@ public class Lessons84021 {
                 if (!usedPuzzlePieces[i] && match(space, puzzle)) {
                     answer += puzzle.size();
                     usedPuzzlePieces[i] = true;
+                    break;
                 }
             }
         }
         return answer;
-    }
-
-    private boolean match(List<int[]> space, List<int[]> puzzle) {
-        if (space.size() != puzzle.size())
-            return false;
-
-        for (int rot = 0; rot < 4; rot++) {
-            if (isSame(space, puzzle)) {
-                return true;
-            }
-
-            for (int[] point : puzzle) {
-                int temp = point[0];
-                point[0] = point[1];
-                point[1] = temp * -1;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean isSame(List<int[]> space, List<int[]> puzzle) {
-        for (int i = 0; i < space.size(); i++) {
-            int[] sPoint = space.get(i);
-            int[] pPoint = puzzle.get(i);
-
-            if (sPoint[0] != pPoint[0] || sPoint[1] != pPoint[1])
-                return false;
-        }
-        return true;
     }
 
     private List<List<int[]>> findShape(int[][] board, int target) {
@@ -84,7 +55,7 @@ public class Lessons84021 {
                 } else {
                     System.out.println("");
 
-                    visited[i][j] = true;
+
                 }
             }
         }
@@ -93,29 +64,29 @@ public class Lessons84021 {
     }
 
     private List<int[]> bfs(int[][] board, int i, int j, int target) {
-        int boardSize = board.length;
-
         Queue<int[]> queue = new LinkedList<>();
         List<int[]> shape = new ArrayList<>();
 
         queue.add(new int[]{i, j});
+        visited[i][j] = true;
 
-        int minr = boardSize;
-        int minc = boardSize;
+        int minr = i;
+        int minc = j;
 
         while (!queue.isEmpty()) {
             int[] curr = queue.poll();
             shape.add(curr);
-            visited[curr[0]][curr[1]] = true;
-            minr = Math.min(curr[0], minr);
-            minc = Math.min(curr[1], minc);
+
 
             for (int r = 0; r < 4; r++) {
-                int nr = curr[0] - mr[r];
-                int nc = curr[1] - mc[r];
+                int nr = curr[0] + mr[r];
+                int nc = curr[1] + mc[r];
 
                 if (nr >= 0 && nc >= 0 && nr < boardSize && nc < boardSize && !visited[nr][nc] && board[nr][nc] == target) {
+                    visited[nr][nc] = true;
                     queue.add(new int[]{nr, nc});
+                    minr = Math.min(nr, minr);
+                    minc = Math.min(nc, minc);
                 }
             }
         }
@@ -127,5 +98,54 @@ public class Lessons84021 {
 
         shape.sort((a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
         return shape;
+    }
+
+    private boolean match(List<int[]> space, List<int[]> puzzle) {
+        if (space.size() != puzzle.size())
+            return false;
+
+        for (int rot = 0; rot < 4; rot++) {
+            if (isSame(space, puzzle)) {
+                return true;
+            }
+
+            rotate(puzzle);
+        }
+
+        return false;
+    }
+
+    private boolean isSame(List<int[]> space, List<int[]> puzzle) {
+        for (int i = 0; i < space.size(); i++) {
+            int[] sPoint = space.get(i);
+            int[] pPoint = puzzle.get(i);
+
+            if (sPoint[0] != pPoint[0] || sPoint[1] != pPoint[1])
+                return false;
+        }
+        return true;
+    }
+
+    private void rotate(List<int[]> puzzle) {
+        for (int[] point : puzzle) {
+            int temp = point[0];
+            point[0] = point[1];
+            point[1] = temp * -1;
+        }
+
+        int minr = boardSize;
+        int minc = boardSize;
+
+        for (int[] point : puzzle) {
+            minr = Math.min(minr, point[0]);
+            minc = Math.min(minc, point[1]);
+        }
+
+        for (int[] point : puzzle) {
+            point[0] -= minr;
+            point[1] -= minc;
+        }
+
+        puzzle.sort((a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
     }
 }
